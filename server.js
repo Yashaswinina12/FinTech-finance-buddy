@@ -2,13 +2,21 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 const Database = require('./backend/db/database');
 const { seedDatabase } = require('./backend/db/seed');
 
 // Initialize database
-const db = new Database();
-db.initialize();
-seedDatabase(db);
+let db;
+try {
+  db = new Database();
+  db.initialize();
+  seedDatabase(db);
+  console.log('✓ Database initialized successfully');
+} catch (error) {
+  console.error('✗ Database initialization error:', error.message);
+  process.exit(1);
+}
 
 // Import routes
 const userRoutes = require('./backend/routes/users');
@@ -41,12 +49,24 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/history', historyRoutes);
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, 'frontend')));
-
-// Serve index.html for all other routes (SPA fallback)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-});
+const frontendPath = path.join(__dirname, 'frontend');
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+  
+  // Serve index.html for all other routes (SPA fallback)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  console.warn('⚠ Frontend folder not found at:', frontendPath);
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: 'SmartSettle API Server',
+      api: 'http://localhost:' + PORT + '/api/health',
+      note: 'Frontend not found. Use API endpoints only.'
+    });
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -65,8 +85,9 @@ app.listen(PORT, () => {
   console.log('========================================');
   console.log(`\n✓ Server running at: http://localhost:${PORT}`);
   console.log('✓ Database initialized');
-  console.log('✓ Demo data loaded\n');
-  console.log('Open http://localhost:' + PORT + ' in your browser\n');
+  console.log('✓ Demo data loaded');
+  console.log(`\n📱 Frontend: http://localhost:${PORT}`);
+  console.log(`🔗 API Health: http://localhost:${PORT}/api/health\n`);
 });
 
 module.exports = app;
