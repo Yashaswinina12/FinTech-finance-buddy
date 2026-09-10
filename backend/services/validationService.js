@@ -1,99 +1,87 @@
-/**
- * Validation Service
- * Centralized input validation and error handling
- */
-
 class ValidationError extends Error {
   constructor(message, status = 400) {
     super(message);
     this.status = status;
+    this.name = 'ValidationError';
   }
 }
 
 class ValidationService {
   static validateUserId(userId) {
-    if (!userId || typeof userId !== 'string') {
-      throw new ValidationError('Invalid user ID');
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      throw new ValidationError('Invalid user ID', 400);
     }
-    return userId;
   }
 
   static validateDebtId(debtId) {
-    if (!debtId || typeof debtId !== 'string') {
-      throw new ValidationError('Invalid debt ID');
+    if (!debtId || typeof debtId !== 'string' || debtId.trim() === '') {
+      throw new ValidationError('Invalid debt ID', 400);
     }
-    return debtId;
   }
 
   static validateProposalId(proposalId) {
-    if (!proposalId || typeof proposalId !== 'string') {
-      throw new ValidationError('Invalid proposal ID');
+    if (!proposalId || typeof proposalId !== 'string' || proposalId.trim() === '') {
+      throw new ValidationError('Invalid proposal ID', 400);
     }
-    return proposalId;
-  }
-
-  static validateAmount(amount) {
-    const num = parseFloat(amount);
-    if (isNaN(num) || num <= 0) {
-      throw new ValidationError('Amount must be a positive number');
-    }
-    return num;
-  }
-
-  static validateString(str, fieldName, maxLength = 500) {
-    if (typeof str !== 'string' || str.trim().length === 0) {
-      throw new ValidationError(`${fieldName} is required`);
-    }
-    if (str.length > maxLength) {
-      throw new ValidationError(`${fieldName} exceeds maximum length of ${maxLength}`);
-    }
-    return str.trim();
   }
 
   static validateDebtCreation(debtorId, creditorId, amount, reason) {
-    this.validateUserId(debtorId);
-    this.validateUserId(creditorId);
-    this.validateAmount(amount);
-    this.validateString(reason, 'Reason', 200);
-
-    if (debtorId === creditorId) {
-      throw new ValidationError('Debtor and creditor must be different users');
+    if (!debtorId || !creditorId) {
+      throw new ValidationError('Debtor and creditor IDs are required', 400);
     }
-
-    return { debtorId, creditorId, amount, reason };
+    if (debtorId === creditorId) {
+      throw new ValidationError('Debtor and creditor cannot be the same person', 400);
+    }
+    if (!amount || amount <= 0 || isNaN(amount)) {
+      throw new ValidationError('Amount must be a valid positive number', 400);
+    }
+    if (!reason || typeof reason !== 'string' || reason.trim() === '') {
+      throw new ValidationError('Reason is required', 400);
+    }
   }
 
-  static validatePayment(debtId, amount, note) {
-    this.validateDebtId(debtId);
-    this.validateAmount(amount);
-    if (note) {
-      this.validateString(note, 'Note', 200);
+  static validateAmount(amount) {
+    const parsedAmount = parseFloat(amount);
+    if (!amount || parsedAmount <= 0 || isNaN(parsedAmount)) {
+      throw new ValidationError('Amount must be a valid positive number', 400);
     }
-
-    return { debtId, amount, note };
+    return parsedAmount;
   }
 
   static validateSettlementProposal(firstDebtId, secondDebtId, amount) {
-    this.validateDebtId(firstDebtId);
-    this.validateDebtId(secondDebtId);
-    this.validateAmount(amount);
-
-    if (firstDebtId === secondDebtId) {
-      throw new ValidationError('Cannot create settlement between the same debt');
+    if (!firstDebtId || !secondDebtId) {
+      throw new ValidationError('Both debt IDs are required', 400);
     }
-
-    return { firstDebtId, secondDebtId, amount };
+    if (firstDebtId === secondDebtId) {
+      throw new ValidationError('Settlement must involve two different debts', 400);
+    }
+    if (!amount || amount <= 0 || isNaN(amount)) {
+      throw new ValidationError('Amount must be a valid positive number', 400);
+    }
   }
 
   static validateApproval(proposalId, userId, approved) {
-    this.validateProposalId(proposalId);
-    this.validateUserId(userId);
-
-    if (typeof approved !== 'boolean') {
-      throw new ValidationError('Approved must be a boolean value');
+    if (!proposalId || typeof proposalId !== 'string' || proposalId.trim() === '') {
+      throw new ValidationError('Invalid proposal ID', 400);
     }
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      throw new ValidationError('Invalid user ID', 400);
+    }
+    if (typeof approved !== 'boolean') {
+      throw new ValidationError('Approval status must be a boolean', 400);
+    }
+  }
 
-    return { proposalId, userId, approved };
+  static validatePayment(debtId, payerId, receiverId, amount) {
+    if (!debtId || !payerId || !receiverId) {
+      throw new ValidationError('Debt ID, payer ID, and receiver ID are required', 400);
+    }
+    if (payerId === receiverId) {
+      throw new ValidationError('Payer and receiver cannot be the same person', 400);
+    }
+    if (!amount || amount <= 0 || isNaN(amount)) {
+      throw new ValidationError('Amount must be a valid positive number', 400);
+    }
   }
 }
 
