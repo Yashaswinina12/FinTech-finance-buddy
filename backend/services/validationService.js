@@ -72,15 +72,15 @@ class ValidationService {
     }
   }
 
-  static validatePayment(debtId, payerId, receiverId, amount) {
-    if (!debtId || !payerId || !receiverId) {
-      throw new ValidationError('Debt ID, payer ID, and receiver ID are required', 400);
-    }
-    if (payerId === receiverId) {
-      throw new ValidationError('Payer and receiver cannot be the same person', 400);
+  static validatePayment(debtId, amount, note) {
+    if (!debtId) {
+      throw new ValidationError('Debt ID is required', 400);
     }
     if (!amount || amount <= 0 || isNaN(amount)) {
       throw new ValidationError('Amount must be a valid positive number', 400);
+    }
+    if (note !== undefined && note !== null && typeof note !== 'string') {
+      throw new ValidationError('Note must be a string', 400);
     }
   }
 }
