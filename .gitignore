@@ -1,0 +1,7 @@
+node_modules/
+data/smartsettle.db*
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/

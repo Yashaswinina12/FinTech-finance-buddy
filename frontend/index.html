@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSettle - Smart Debt & Settlement</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <span class="logo-icon">💰</span>
+                    <span>SmartSettle</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#" data-page="dashboard" class="nav-link active">Dashboard</a></li>
+                    <li><a href="#" data-page="settlements" class="nav-link">Settlements</a></li>
+                    <li><a href="#" data-page="history" class="nav-link">History</a></li>
+                    <li><a href="#" data-page="profile" class="nav-link">Profile</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="page active">
+                <div class="header-section">
+                    <h1>Smart Debt & Settlement</h1>
+                    <div class="user-selector">
+                        <label>Current User:</label>
+                        <select id="currentUser">
+                            <option value="">Select a user...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-grid">
+                    <div class="summary-card card-owe">
+                        <div class="card-label">Total I Owe</div>
+                        <div class="card-amount" id="totalOwe">₹0</div>
+                    </div>
+                    <div class="summary-card card-owed">
+                        <div class="card-label">Total Owed to Me</div>
+                        <div class="card-amount" id="totalOwed">₹0</div>
+                    </div>
+                    <div class="summary-card card-paid">
+                        <div class="card-label">Total Paid</div>
+                        <div class="card-amount" id="totalPaid">₹0</div>
+                    </div>
+                    <div class="summary-card card-received">
+                        <div class="card-label">Total Received</div>
+                        <div class="card-amount" id="totalReceived">₹0</div>
+                    </div>
+                </div>
+
+                <!-- Current Status -->
+                <div class="status-section">
+                    <h2>Current Debts</h2>
+                    <div id="currentDebts" class="debts-list">
+                        <p class="empty-state">Select a user to view debts</p>
+                    </div>
+                </div>
+
+                <!-- Settlement Chains -->
+                <div class="chains-section">
+                    <h2>Available Settlements</h2>
+                    <button id="findSettlements" class="btn-primary">Find Smart Settlements</button>
+                    <div id="settlementChains" class="chains-list">
+                        <p class="empty-state">No settlement chains found</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settlements Page -->
+            <section id="settlements" class="page">
+                <h1>Settlement Proposals</h1>
+                
+                <div class="section-container">
+                    <h2>Pending Proposals</h2>
+                    <div id="pendingProposals" class="proposals-list">
+                        <p class="empty-state">No pending proposals</p>
+                    </div>
+                </div>
+
+                <div class="section-container">
+                    <h2>Completed Settlements</h2>
+                    <div id="completedSettlements" class="proposals-list">
+                        <p class="empty-state">No completed settlements</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Page -->
+            <section id="history" class="page">
+                <h1>Complete History</h1>
+                
+                <div class="history-tabs">
+                    <button class="tab-btn active" data-tab="timeline">Timeline</button>
+                    <button class="tab-btn" data-tab="payments">Payments</button>
+                    <button class="tab-btn" data-tab="settlements">Settlements</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="timeline" class="tab-pane active">
+                        <div id="activityTimeline" class="timeline">
+                            <p class="empty-state">No activity</p>
+                        </div>
+                    </div>
+
+                    <div id="payments" class="tab-pane">
+                        <div id="paymentsList" class="payments-table">
+                            <p class="empty-state">No payments</p>
+                        </div>
+                    </div>
+
+                    <div id="settlements" class="tab-pane">
+                        <div id="settlementsList" class="settlements-table">
+                            <p class="empty-state">No settlements</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Page -->
+            <section id="profile" class="page">
+                <h1>User Profile</h1>
+                
+                <div class="profile-container">
+                    <div class="user-selector-profile">
+                        <label>Select User:</label>
+                        <select id="profileUser">
+                            <option value="">Choose a user...</option>
+                        </select>
+                    </div>
+
+                    <div id="profileContent" class="profile-content">
+                        <!-- Profile sections will be populated here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="settlementModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Settlement Proposal</h2>
+            <div id="modalBody" class="modal-body">
+                <!-- Settlement details will be shown here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
